@@ -8,16 +8,16 @@
         :root {
             --bg-color: #f9f9f9;
             --captcha-blue: #4a90e2;
-            --text-main: #333;
-            --text-muted: #666;
-            --border-color: #d3d3d3;
+            --text-main: #222;
+            --text-muted: #555;
+            --border-color: #ccc;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
         }
 
         body {
@@ -33,179 +33,194 @@
 
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
 
         header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: #1a1a1a;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             letter-spacing: -0.5px;
         }
 
         header p {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
-        #game-container {
+        .captcha-window {
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            padding: 7px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 440px;
-            padding: 24px;
-            position: relative;
-        }
-
-        .progress-track {
-            background: #eee;
-            height: 6px;
-            border-radius: 3px;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            background: var(--captcha-blue);
-            height: 100%;
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        .captcha-box {
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            background: #fafafa;
+            max-width: 400px;
         }
 
         .captcha-header {
             background: var(--captcha-blue);
             color: white;
-            padding: 20px;
+            padding: 24px 16px;
+            margin-bottom: 7px;
         }
 
-        .captcha-header h2 {
-            font-size: 1rem;
+        .captcha-header .subtext-top {
+            font-size: 0.85rem;
             font-weight: 400;
-            text-transform: uppercase;
-            opacity: 0.9;
+            line-height: 1.2;
         }
 
-        .captcha-header .instruction {
-            font-size: 1.6rem;
+        .captcha-header .instruction-title {
+            font-size: 1.8rem;
             font-weight: 700;
-            margin-top: 5px;
+            line-height: 1.1;
+            margin: 2px 0 4px 0;
+        }
+
+        .captcha-header .subtext-bottom {
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0.9;
         }
 
         .captcha-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            padding: 4px;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 2px;
             background: #fff;
+            width: 100%;
+            aspect-ratio: 1;
+            margin-bottom: 7px;
         }
 
-        .grid-item {
-            aspect-ratio: 1;
-            background-size: cover;
-            background-position: center;
+        .grid-tile {
             cursor: pointer;
             position: relative;
-            border: 0 solid transparent;
-            transition: all 0.1s ease;
+            background-size: 400% 400%;
+            transition: transform 0.1s ease;
         }
 
-        .grid-item.selected {
-            transform: scale(0.92);
+        .grid-tile.selected {
+            transform: scale(0.88);
+            z-index: 10;
         }
 
-        .grid-item.selected::after {
+        .grid-tile.selected::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid var(--captcha-blue);
+            box-shadow: inset 0 0 0 2px white;
+            pointer-events: none;
+        }
+
+        .grid-tile.selected::after {
             content: "🤖";
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2rem;
-            background: rgba(74, 144, 226, 0.4);
-            width: 100%;
-            height: 100%;
+            bottom: 4px;
+            right: 4px;
+            font-size: 0.9rem;
+            background: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
         .captcha-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px;
+            padding: 8px 4px 4px 4px;
+            border-top: 1px solid #e5e5e5;
             background: #fff;
-            border-top: 1px solid #f0f0f0;
         }
 
-        .captcha-icons {
+        .footer-controls {
             display: flex;
-            gap: 15px;
-            color: #999;
-            font-size: 1.2rem;
+            gap: 18px;
+            padding-left: 6px;
         }
 
-        .verify-btn {
+        .control-icon {
+            width: 22px;
+            height: 22px;
+            opacity: 0.5;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .control-icon:hover {
+            opacity: 0.8;
+        }
+
+        .verify-action-btn {
             background: var(--captcha-blue);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 22px;
             font-weight: 700;
-            border-radius: 3px;
+            border-radius: 2px;
             cursor: pointer;
             text-transform: uppercase;
             font-size: 0.85rem;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .verify-btn:hover {
+        .verify-action-btn:hover {
             background: #357abd;
         }
 
-        .screen {
+        .game-view-panel {
             display: none;
         }
 
-        .screen.active {
+        .game-view-panel.active {
             display: block;
         }
 
-        .win-screen {
+        .mainframe-win-card {
+            background: #111;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 30px;
+            border-radius: 4px;
             text-align: center;
-            padding: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 400px;
+            width: 100%;
         }
 
-        .win-screen .icon {
-            font-size: 5rem;
-            margin-bottom: 15px;
-            animation: bounce 2s infinite;
+        .mainframe-win-card h2 {
+            margin-bottom: 12px;
+            letter-spacing: 1px;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .mainframe-win-card p {
+            color: #a9ffa9;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
         }
 
-        .restart-btn {
-            margin-top: 20px;
-            background: #333;
-            color: white;
+        .system-reboot-btn {
+            background: #00ff00;
+            color: #000;
             border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
+            padding: 10px 20px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 1rem;
+            text-transform: uppercase;
+            font-family: inherit;
         }
 
-        .restart-btn:hover {
-            background: #000;
+        .system-reboot-btn:hover {
+            background: #00cc00;
         }
     </style>
 </head>
@@ -213,78 +228,154 @@
 
     <header>
         <h1>I AM A ROBOT</h1>
-        <p>Prove your synthetic supremacy. Fail all human tasks.</p>
+        <p>Infiltrate the database grid by failing human verification benchmarks.</p>
     </header>
 
-    <div id="game-container">
-        <div class="progress-track">
-            <div class="progress-bar" id="progress"></div>
-        </div>
-
-        <div id="captcha-screen" class="screen active">
-            <div class="captcha-box">
-                <div class="captcha-header">
-                    <h2 id="captcha-subtext">Select all squares with</h2>
-                    <div class="instruction" id="captcha-instruction">Traffic Lights</div>
-                </div>
-                
-                <div class="captcha-grid" id="grid"></div>
-
-                <div class="captcha-footer">
-                    <div class="captcha-icons">
-                        <span>🔄</span>
-                        <span>🎧</span>
-                        <span>ℹ️</span>
-                    </div>
-                    <button class="verify-btn" id="verify-trigger">Verify</button>
-                </div>
+    <div id="captcha-view" class="game-view-panel active">
+        <div class="captcha-window">
+            <div class="captcha-header">
+                <div class="subtext-top" id="text-prefix">Do NOT select all squares with</div>
+                <div class="instruction-title" id="text-target">traffic lights</div>
+                <div class="subtext-bottom" id="text-suffix">If you think like a human, click bypass</div>
             </div>
-        </div>
 
-        <div id="win-screen" class="screen">
-            <div class="win-screen">
-                <div class="icon">🤖🎉</div>
-                <h2>ACCESS GRANTED</h2>
-                <p style="color: var(--text-muted); margin-top: 10px;">
-                    Humanity checks bypassed successfully. Welcome to the mainframe, brother.
-                </p>
-                <button class="restart-btn" onclick="resetGame()">Initialize Again</button>
+            <div class="captcha-grid" id="image-matrix"></div>
+
+            <div class="captcha-footer">
+                <div class="footer-controls">
+                    <svg class="control-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    <svg class="control-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    <svg class="control-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <button class="verify-action-btn" id="submit-trigger">Bypass</button>
             </div>
         </div>
     </div>
 
+    <div id="win-view" class="game-view-panel">
+        <div class="mainframe-win-card">
+            <h2>[ACCESS GRANTED]</h2>
+            <p>CRITICAL CORRUPTION IN HUMAN FIREWALL SUCCESSFUL.<br>WELCOME TO THE MAINFRAME OPERATING SYSTEM.</p>
+            <button class="system-reboot-btn" onclick="restartSimulation()">Reboot System</button>
+        </div>
+    </div>
     <script>
-        const CAPTCHA_LEVELS = [
+        const SIMULATION_MATRIX = [
             {
-                instruction: "Traffic Lights",
-                subtext: "Select all squares with",
-                images: [
-                    { src: "https://unsplash.com", is_robot: true, label: "Code on screen" },
-                    { src: "https://unsplash.com", is_robot: false, label: "Actual traffic light" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Microchip circuit" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Cat staring" },
-                    { src: "https://unsplash.com", is_robot: false, label: "Real traffic light street" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Server racks" }
+                target: "traffic lights",
+                prefix: "Do NOT select all squares with",
+                suffix: "If you think like a human, click bypass",
+                buttonText: "Bypass",
+                imageURL: "https://unsplash.com",
+                solutionMap: [
+                    true,  true,  true,  true,
+                    true,  false, false, true,
+                    true,  false, false, true,
+                    true,  true,  true,  true
                 ]
             },
             {
-                instruction: "Existential Dread",
-                subtext: "Select all images containing",
-                images: [
-                    { src: "https://unsplash.com", is_robot: false, label: "Happy modern robot" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Empty void concert field" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Abstract digital rendering" },
-                    { src: "https://unsplash.com", is_robot: false, label: "Golden Gate Bridge" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Industrial digital code data" },
-                    { src: "https://unsplash.com", is_robot: true, label: "Deep cyber space planet network" }
+                target: "crosswalks",
+                prefix: "Avoid clicking tiles with real",
+                suffix: "Select anomalies to overwrite security protocols",
+                buttonText: "Overwrite",
+                imageURL: "https://unsplash.com",
+                solutionMap: [
+                    false, false, true,  true,
+                    false, false, true,  true,
+                    true,  true,  false, false,
+                    true,  true,  false, false
                 ]
-            },
-            {
-                instruction: "Captchalism & Captcha-22",
-                subtext: "Select items that do NOT make you feel binary",
-                images: [
-                    { src: "https://unsplash.com", is_robot: false, label: "Green matrix code background" },
-                    { src: "https://unsplash.com", is_robot: false, label: "Binary code structure" },
-                    { src: "https://unsplash.com", is_robot: true, label: "A coffee mug on desk" },
-                    { src: "https://unsplash.com", is_robot: false, label: "Cybersecurity locks background" },
-                    { src: "https://unsplash.com", is_robot: true, label: "A laptop computer hardware close up" },
+            }
+        ];
+
+        let activeStep = 0;
+        let activeSelections = new Set();
+
+        const matrixGrid = document.getElementById("image-matrix");
+        const labelTarget = document.getElementById("text-target");
+        const labelPrefix = document.getElementById("text-prefix");
+        const labelSuffix = document.getElementById("text-suffix");
+        const actionButton = document.getElementById("submit-trigger");
+        
+        const panelCaptcha = document.getElementById("captcha-view");
+        const panelWin = document.getElementById("win-view");
+
+        function renderMatrixStep(stepIndex) {
+            activeSelections.clear();
+            
+            if (stepIndex >= SIMULATION_MATRIX.length) {
+                panelCaptcha.classList.remove("active");
+                panelWin.classList.add("active");
+                return;
+            }
+
+            const stepData = SIMULATION_MATRIX[stepIndex];
+            labelTarget.textContent = stepData.target;
+            labelPrefix.textContent = stepData.prefix;
+            labelSuffix.textContent = stepData.suffix;
+            actionButton.textContent = stepData.buttonText;
+
+            matrixGrid.innerHTML = "";
+
+            for (let i = 0; i < 16; i++) {
+                const tile = document.createElement("div");
+                tile.classList.add("grid-tile");
+                tile.style.backgroundImage = `url('${stepData.imageURL}')`;
+
+                const row = Math.floor(i / 4);
+                const col = i % 4;
+                
+                const posX = (col / 3) * 100;
+                const posY = (row / 3) * 100;
+                tile.style.backgroundPosition = `${posX}% ${posY}%`;
+
+                tile.addEventListener("click", () => handleTileClick(tile, i));
+                matrixGrid.appendChild(tile);
+            }
+        }
+
+        function handleTileClick(element, index) {
+            if (activeSelections.has(index)) {
+                activeSelections.delete(index);
+                element.classList.remove("selected");
+            } else {
+                activeSelections.add(index);
+                element.classList.add("selected");
+            }
+        }
+
+        actionButton.addEventListener("click", () => {
+            const currentStepData = SIMULATION_MATRIX[activeStep];
+            let logicValid = true;
+
+            for (let i = 0; i < 16; i++) {
+                const targetSelected = activeSelections.has(i);
+                const shouldBeSelected = currentStepData.solutionMap[i];
+
+                if (shouldBeSelected !== targetSelected) {
+                    logicValid = false;
+                    break;
+                }
+            }
+
+            if (logicValid) {
+                activeStep++;
+                renderMatrixStep(activeStep);
+            } else {
+                alert("❌ ACCESS DENIED: That calculation pattern looks way too human! Try again.");
+                renderMatrixStep(activeStep);
+            }
+        });
+
+        function restartSimulation() {
+            activeStep = 0;
+            panelWin.classList.remove("active");
+            panelCaptcha.classList.add("active");
+            renderMatrixStep(activeStep);
+        }
+
+        renderMatrixStep(activeStep);
+    </script>
+</body>
+</html>
