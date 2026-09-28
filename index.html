@@ -260,31 +260,36 @@
         </div>
     </div>
     <script>
+        // Mapped level configuration matrix using the exact image supplied
         const SIMULATION_MATRIX = [
             {
                 target: "traffic lights",
                 prefix: "Do NOT select all squares with",
                 suffix: "If you think like a human, click bypass",
                 buttonText: "Bypass",
-                imageURL: "https://unsplash.com",
+                // Img BB CDN alternative to prevent local browser CORS blocking issues
+                imageURL: "https://ibb.co",
+                // Solution matrix config: The lights are situated at tiles 0, 1, 2, 3 (top row).
+                // So the robotic logic means we MUST select everything except those tiles.
                 solutionMap: [
+                    false, false, false, false,
                     true,  true,  true,  true,
-                    true,  false, false, true,
-                    true,  false, false, true,
+                    true,  true,  true,  true,
                     true,  true,  true,  true
                 ]
             },
             {
-                target: "crosswalks",
-                prefix: "Avoid clicking tiles with real",
+                target: "white cars",
+                prefix: "Avoid selecting tiles containing",
                 suffix: "Select anomalies to overwrite security protocols",
                 buttonText: "Overwrite",
-                imageURL: "https://unsplash.com",
+                imageURL: "https://ibb.co",
+                // Second phase challenge: Target the white car on the bottom left (tiles 8, 12)
                 solutionMap: [
-                    false, false, true,  true,
-                    false, false, true,  true,
-                    true,  true,  false, false,
-                    true,  true,  false, false
+                    true,  true,  true,  true,
+                    true,  true,  true,  true,
+                    false, true,  true,  true,
+                    false, true,  true,  true
                 ]
             }
         ];
