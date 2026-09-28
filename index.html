@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I AM A ROBOT - The Anti-Captcha Game</title>
+    <style>
+        :root {
+            --bg-color: #f9f9f9;
+            --captcha-blue: #4a90e2;
+            --text-main: #333;
+            --text-muted: #666;
+            --border-color: #d3d3d3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        #game-container {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 440px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .progress-track {
+            background: #eee;
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--captcha-blue);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .captcha-box {
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            background: #fafafa;
+        }
+
+        .captcha-header {
+            background: var(--captcha-blue);
+            color: white;
+            padding: 20px;
+        }
+
+        .captcha-header h2 {
+            font-size: 1rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+
+        .captcha-header .instruction {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .captcha-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            padding: 4px;
+            background: #fff;
+        }
+
+        .grid-item {
+            aspect-ratio: 1;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+            position: relative;
+            border: 0 solid transparent;
+            transition: all 0.1s ease;
+        }
+
+        .grid-item.selected {
+            transform: scale(0.92);
+        }
+
+        .grid-item.selected::after {
+            content: "🤖";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            background: rgba(74, 144, 226, 0.4);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .captcha-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px;
+            background: #fff;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .captcha-icons {
+            display: flex;
+            gap: 15px;
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        .verify-btn {
+            background: var(--captcha-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 700;
+            border-radius: 3px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .verify-btn:hover {
+            background: #357abd;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .win-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .win-screen .icon {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .restart-btn {
+            margin-top: 20px;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .restart-btn:hover {
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>I AM A ROBOT</h1>
+        <p>Prove your synthetic supremacy. Fail all human tasks.</p>
+    </header>
+
+    <div id="game-container">
+        <div class="progress-track">
+            <div class="progress-bar" id="progress"></div>
+        </div>
+
+        <div id="captcha-screen" class="screen active">
+            <div class="captcha-box">
+                <div class="captcha-header">
+                    <h2 id="captcha-subtext">Select all squares with</h2>
+                    <div class="instruction" id="captcha-instruction">Traffic Lights</div>
+                </div>
+                
+                <div class="captcha-grid" id="grid"></div>
+
+                <div class="captcha-footer">
+                    <div class="captcha-icons">
+                        <span>🔄</span>
+                        <span>🎧</span>
+                        <span>ℹ️</span>
+                    </div>
+                    <button class="verify-btn" id="verify-trigger">Verify</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="win-screen" class="screen">
+            <div class="win-screen">
+                <div class="icon">🤖🎉</div>
+                <h2>ACCESS GRANTED</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">
+                    Humanity checks bypassed successfully. Welcome to the mainframe, brother.
+                </p>
+                <button class="restart-btn" onclick="resetGame()">Initialize Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CAPTCHA_LEVELS = [
+            {
+                instruction: "Traffic Lights",
+                subtext: "Select all squares with",
+                images: [
+                    { src: "https://unsplash.com", is_robot: true, label: "Code on screen" },
+                    { src: "https://unsplash.com", is_robot: false, label: "Actual traffic light" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Microchip circuit" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Cat staring" },
+                    { src: "https://unsplash.com", is_robot: false, label: "Real traffic light street" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Server racks" }
+                ]
+            },
+            {
+                instruction: "Existential Dread",
+                subtext: "Select all images containing",
+                images: [
+                    { src: "https://unsplash.com", is_robot: false, label: "Happy modern robot" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Empty void concert field" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Abstract digital rendering" },
+                    { src: "https://unsplash.com", is_robot: false, label: "Golden Gate Bridge" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Industrial digital code data" },
+                    { src: "https://unsplash.com", is_robot: true, label: "Deep cyber space planet network" }
+                ]
+            },
+            {
+                instruction: "Captchalism & Captcha-22",
+                subtext: "Select items that do NOT make you feel binary",
+                images: [
+                    { src: "https://unsplash.com", is_robot: false, label: "Green matrix code background" },
+                    { src: "https://unsplash.com", is_robot: false, label: "Binary code structure" },
+                    { src: "https://unsplash.com", is_robot: true, label: "A coffee mug on desk" },
+                    { src: "https://unsplash.com", is_robot: false, label: "Cybersecurity locks background" },
+                    { src: "https://unsplash.com", is_robot: true, label: "A laptop computer hardware close up" },
