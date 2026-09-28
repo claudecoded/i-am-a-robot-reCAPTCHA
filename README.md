@@ -67,8 +67,8 @@ Simply open `index.html`, navigate to the `CAPTCHA_LEVELS` array, and push your 
     instruction: "Your Absurd Prompt Title",
     subtext: "Select all blocks containing",
     images: [
-        { src: "https://unsplash.com", is_robot: true, label: "Wrong answer (Passes the level)" },
-        { src: "https://unsplash.com", is_robot: false, label: "Correct human answer (Fails the level)" },
+        { src: "YOUR_IMAGE_URL_HERE", is_robot: true, label: "Wrong answer (Passes the level)" },
+        { src: "YOUR_IMAGE_URL_HERE", is_robot: false, label: "Correct human answer (Fails the level)" },
         // Add up to 6 structured grid items...
     ]
 }
