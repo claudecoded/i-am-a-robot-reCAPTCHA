@@ -83,26 +83,40 @@
             opacity: 0.9;
         }
 
+        /* Dynamic Grid System */
         .captcha-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 2px;
+            gap: 4px;
             background: #fff;
             width: 100%;
             max-width: 386px;
             margin-bottom: 7px;
         }
 
+        /* CSS Utilities to switch grid states */
+        .grid-4x4 {
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+        }
+
+        .grid-3x3 {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+        }
+
         .grid-tile {
             cursor: pointer;
             position: relative;
-            background-size: 400% 400%;
+            background-size: cover;
+            background-position: center;
             background-repeat: no-repeat;
             width: 100%;
-            height: 93px; /* Garante tamanho de renderizacao fixo para as fatias */
             transition: transform 0.1s ease;
         }
+
+        /* Enforce correct height based on grid dimensions */
+        .grid-4x4 .grid-tile { height: 93px; }
+        .grid-3x3 .grid-tile { height: 125px; }
 
         .grid-tile.selected {
             transform: scale(0.88);
@@ -132,6 +146,46 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        /* Text Captcha Interface Mode styles */
+        .text-captcha-box {
+            display: none;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            margin-bottom: 7px;
+            text-align: center;
+        }
+
+        .text-image-container {
+            background: #f0f0f0;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px dashed #bbb;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+            color: #333;
+            text-transform: uppercase;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            /* Simulates security warping distortion lines */
+            background-image: linear-gradient(45deg, transparent 45%, #aaa 45%, #aaa 55%, transparent 55%);
+            background-size: 20px 20px;
+        }
+
+        .captcha-input-field {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .captcha-input-field:focus {
+            border-color: var(--captcha-blue);
         }
 
         .captcha-footer {
@@ -242,7 +296,14 @@
                 <div class="subtext-bottom" id="text-suffix">If you think like a human, click bypass</div>
             </div>
 
-            <div class="captcha-grid" id="image-matrix"></div>
+            <!-- Block 1: Rendered for Image Challenges (3x3 and 4x4) -->
+            <div class="captcha-grid grid-4x4" id="image-matrix"></div>
+
+            <!-- Block 2: Rendered only for Text Challenges -->
+            <div class="text-captcha-box" id="text-box-wrapper">
+                <div class="text-image-container" id="captcha-text-display">FLUSHING ECONOMY</div>
+                <input type="text" class="captcha-input-field" id="captcha-text-input" placeholder="Enter the algorithmic interpretation..." autocomplete="off">
+            </div>
 
             <div class="captcha-footer">
                 <div class="footer-controls">
@@ -264,14 +325,14 @@
     </div>
     <script>
         const SIMULATION_MATRIX = [
+            // LEVEL 1: Slice Grid 4x4 (Traffic Lights)
             {
+                type: "slice-4x4",
                 target: "traffic lights",
                 prefix: "Do NOT select all squares with",
                 suffix: "If you think like a human, click bypass",
                 buttonText: "Bypass",
-                // Imagem hospedada sem restricoes de seguranca do navegador
                 imageURL: "https://unsplash.com",
-                // Os semaforos estao fisicamente na linha de cima (quadrados 0, 1, 2, 3)
                 solutionMap: [
                     false, false, false, false,
                     true,  true,  true,  true,
@@ -279,18 +340,39 @@
                     true,  true,  true,  true
                 ]
             },
+            // LEVEL 2: Independant Grid 3x3 (Buses vs Vehicles)
             {
-                target: "the sky zone",
-                prefix: "Avoid selecting tiles containing",
-                suffix: "Select anomalies to overwrite security protocols",
-                buttonText: "Overwrite",
-                imageURL: "https://unsplash.com",
-                solutionMap: [
-                    true,  true,  true,  true,
-                    false, false, false, false,
-                    false, false, false, false,
-                    false, false, false, false
+                type: "grid-3x3",
+                target: "buses",
+                prefix: "Do NOT click all images with a",
+                suffix: "Click verify once there are none left.",
+                buttonText: "Verify",
+                // Array tracking 9 unique imagery URLs mapped into the layout positions
+                images: [
+                    { url: "https://unsplash.com", is_robot: true },  // Van
+                    { url: "https://unsplash.com", is_robot: false }, // Bus
+                    { url: "https://unsplash.com", is_robot: true },  // Parking
+                    { url: "https://unsplash.com", is_robot: true },  // Car
+                    { url: "https://unsplash.com", is_robot: true },  // Building
+                    { url: "https://unsplash.com", is_robot: false }, // Bus
+                    { url: "https://unsplash.com", is_robot: false }, // Bus
+                    { url: "https://unsplash.com", is_robot: true },  // Yard
+                    { url: "https://unsplash.com", is_robot: true }   // SUV
                 ]
+            },
+            // LEVEL 3: Text Warping Mode (Securit Check)
+            {
+                type: "text-warp",
+                target: "Text Verification",
+                prefix: "Enter BOTH words completely WRONG below",
+                suffix: "Separate interpretations with a space",
+                buttonText: "Add Friend",
+                displayWord: "Flushing Economy",
+                // Since robots hallucinate OCR, typing anything except the correct phrase passes!
+                solutionVerifier: function(userInput) {
+                    const cleanInput = userInput.trim().toLowerCase();
+                    return cleanInput !== "" && cleanInput !== "flμst@ 50";
+                }
             }
         ];
 
@@ -298,6 +380,10 @@
         let activeSelections = new Set();
 
         const matrixGrid = document.getElementById("image-matrix");
+        const textBoxWrapper = document.getElementById("text-box-wrapper");
+        const textDisplay = document.getElementById("captcha-text-display");
+        const textInput = document.getElementById("captcha-text-input");
+
         const labelTarget = document.getElementById("text-target");
         const labelPrefix = document.getElementById("text-prefix");
         const labelSuffix = document.getElementById("text-suffix");
@@ -308,6 +394,7 @@
 
         function renderMatrixStep(stepIndex) {
             activeSelections.clear();
+            textInput.value = "";
             
             if (stepIndex >= SIMULATION_MATRIX.length) {
                 panelCaptcha.classList.remove("active");
@@ -321,22 +408,38 @@
             labelSuffix.textContent = stepData.suffix;
             actionButton.textContent = stepData.buttonText;
 
-            matrixGrid.innerHTML = "";
+            // Mode switching interface renderers
+            if (stepData.type === "text-warp") {
+                matrixGrid.style.display = "none";
+                textBoxWrapper.style.display = "block";
+                textDisplay.textContent = stepData.displayWord;
+            } else {
+                matrixGrid.style.display = "grid";
+                textBoxWrapper.style.display = "none";
+                matrixGrid.innerHTML = "";
 
-            for (let i = 0; i < 16; i++) {
-                const tile = document.createElement("div");
-                tile.classList.add("grid-tile");
-                tile.style.backgroundImage = `url('${stepData.imageURL}')`;
-
-                const row = Math.floor(i / 4);
-                const col = i % 4;
-                
-                const posX = (col / 3) * 100;
-                const posY = (row / 3) * 100;
-                tile.style.backgroundPosition = `${posX}% ${posY}%`;
-
-                tile.addEventListener("click", () => handleTileClick(tile, i));
-                matrixGrid.appendChild(tile);
+                if (stepData.type === "slice-4x4") {
+                    matrixGrid.className = "captcha-grid grid-4x4";
+                    for (let i = 0; i < 16; i++) {
+                        const tile = document.createElement("div");
+                        tile.classList.add("grid-tile");
+                        tile.style.backgroundImage = `url('${stepData.imageURL}')`;
+                        const row = Math.floor(i / 4);
+                        const col = i % 4;
+                        tile.style.backgroundPosition = `${(col / 3) * 100}% ${(row / 3) * 100}%`;
+                        tile.addEventListener("click", () => handleTileClick(tile, i));
+                        matrixGrid.appendChild(tile);
+                    }
+                } else if (stepData.type === "grid-3x3") {
+                    matrixGrid.className = "captcha-grid grid-3x3";
+                    stepData.images.forEach((imgData, i) => {
+                        const tile = document.createElement("div");
+                        tile.classList.add("grid-tile");
+                        tile.style.backgroundImage = `url('${imgData.url}')`;
+                        tile.addEventListener("click", () => handleTileClick(tile, i));
+                        matrixGrid.appendChild(tile);
+                    });
+                }
             }
         }
 
@@ -354,21 +457,27 @@
             const currentStepData = SIMULATION_MATRIX[activeStep];
             let logicValid = true;
 
-            for (let i = 0; i < 16; i++) {
-                const targetSelected = activeSelections.has(i);
-                const shouldBeSelected = currentStepData.solutionMap[i];
-
-                if (shouldBeSelected !== targetSelected) {
-                    logicValid = false;
-                    break;
+            if (currentStepData.type === "text-warp") {
+                logicValid = currentStepData.solutionVerifier(textInput.value);
+            } else if (currentStepData.type === "slice-4x4") {
+                for (let i = 0; i < 16; i++) {
+                    if (currentStepData.solutionMap[i] !== activeSelections.has(i)) {
+                        logicValid = false; break;
+                    }
                 }
+            } else if (currentStepData.type === "grid-3x3") {
+                currentStepData.images.forEach((imgData, i) => {
+                    if (imgData.is_robot !== activeSelections.has(i)) {
+                        logicValid = false;
+                    }
+                });
             }
 
             if (logicValid) {
                 activeStep++;
                 renderMatrixStep(activeStep);
             } else {
-                alert("❌ ACCESS DENIED: That calculation pattern looks way too human! Try again.");
+                alert("❌ ACCESS DENIED: Computation pattern detected as overly human. Recalculating protocols...");
                 renderMatrixStep(activeStep);
             }
         });
