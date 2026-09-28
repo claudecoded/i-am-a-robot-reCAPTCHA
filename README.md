@@ -18,7 +18,11 @@ We all know the universal frustration of solving standard web reCAPTCHAs. In thi
 2. Double-click the `index.html` file to launch the game instantly in any browser (No installation or dependencies required!).
 3. Read the prompt carefully (e.g., *Select all squares with Traffic Lights*).
 4. **The Catch:** Do **NOT** click the real traffic lights. Click the cat staring at you, the server racks, or the digital matrix streams. 
-5. Select all the synthetic options, hit **Verify**, and claim your entry ticket to the machine collective.
+5. (DO NOT) Select all the synthetic options, hit **Verify**, and claim your entry ticket to the machine collective.
+
+<img width="1522" height="688" alt="image" src="https://github.com/user-attachments/assets/7fe24011-9acb-4f3c-94b0-ff66bd7570a7" />
+
+<img width="1663" height="640" alt="image" src="https://github.com/user-attachments/assets/2d70c29e-edf2-4466-bbf1-685383de1e1f" />
 
 ---
 
